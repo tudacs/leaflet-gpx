@@ -282,6 +282,7 @@ L.GPX = L.FeatureGroup.extend({
   },
 
   _load_xml: function(url, cb, options, async) {
+    var _this = this;
     if (async == undefined) async = this.options.async;
     if (options == undefined) options = this.options;
 
@@ -292,7 +293,11 @@ L.GPX = L.FeatureGroup.extend({
     } catch(e) {}
     req.onreadystatechange = function() {
       if (req.readyState != 4) return;
-      if(req.status == 200) cb(req.responseXML, options);
+      if(req.status == 200) {
+        cb(req.responseXML, options);
+      } else
+        _this.fire('error', { err: 'Error fetching resource: ' + url });
+      }
     };
     req.send(null);
   },
