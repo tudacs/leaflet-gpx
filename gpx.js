@@ -292,7 +292,7 @@ L.GPX = L.FeatureGroup.extend({
     } catch(e) {}
     req.onreadystatechange = function() {
       if (req.readyState != 4) return;
-      if(req.status == 200) cb(req.responseXML, options);
+      cb(req.responseXML, options);
     };
     req.send(null);
   },
@@ -300,7 +300,11 @@ L.GPX = L.FeatureGroup.extend({
   _parse: function(input, options, async) {
     var _this = this;
     var cb = function(gpx, options) {
-      var layers = _this._parse_gpx_data(gpx, options);
+      try {
+        var layers = _this._parse_gpx_data(gpx, options);
+      } catch(e) {
+        var layers = null;
+      }
       if (!layers) {
         _this.fire('error', { err: 'No parseable layers of type(s) ' + JSON.stringify(options.gpx_options.parseElements) });
         return;
